@@ -1,3 +1,4 @@
+//@sx.rdr
 #define ENA 3
 #define IN1 8
 #define IN2 9
@@ -11,7 +12,7 @@ void setup() {
 
   analogWrite(ENA, 255); // Set motor speed (255 = max speed)
   Serial1.begin(9600);   // For Bluetooth or Wi-Fi communication
-  Serial.begin(9600);    // For debugging
+  Serial.begin(9600);    // For debugging @sx.rdr
 }
 
 void loop() {
