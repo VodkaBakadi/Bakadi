@@ -1,0 +1,33 @@
+#define ENA 3
+#define IN1 8
+#define IN2 9
+
+char command;
+
+void setup() {
+  pinMode(ENA, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+
+  analogWrite(ENA, 255); // Set motor speed (255 = max speed)
+  Serial1.begin(9600);   // For Bluetooth or Wi-Fi communication
+  Serial.begin(9600);    // For debugging
+}
+
+void loop() {
+  if (Serial1.available()) {   // Check for incoming data
+    command = Serial1.read();  // Read the command
+    Serial.println(command);   // Print the command to Serial Monitor
+
+    if (command == 'F') {      // 'F' for Forward
+      digitalWrite(IN1, HIGH);
+      digitalWrite(IN2, LOW);
+    } else if (command == 'B') { // 'B' for Backward
+      digitalWrite(IN1, LOW);
+      digitalWrite(IN2, HIGH);
+    } else if (command == 'S') { // 'S' for Stop
+      digitalWrite(IN1, LOW);
+      digitalWrite(IN2, LOW);
+    }
+  }
+}
