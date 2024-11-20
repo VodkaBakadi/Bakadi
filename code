@@ -1,0 +1,58 @@
+// Pin define karte hain
+const int motorSpeedPin = 9;  // Speed control ke liye
+const int motorDirPin1 = 7;   // Direction ke liye IN1
+const int motorDirPin2 = 8;   // Direction ke liye IN2
+
+char command = 'S';  // Default command = Stop
+
+void setup() {
+  pinMode(motorSpeedPin, OUTPUT); // PWM pin
+  pinMode(motorDirPin1, OUTPUT); // IN1
+  pinMode(motorDirPin2, OUTPUT); // IN2
+  
+  Serial.begin(9600); // WiFi module ke liye communication start
+
+  stopMotor(); // Start mein motor ko stop rakho
+}
+
+void loop() {
+  if (Serial.available() > 0) { // Jab WiFi se data aaye
+    command = Serial.read();    // Command read karo
+  }
+
+  switch (command) {
+    case 'F':  // Forward
+      forwardMotor();
+      break;
+    case 'B':  // Backward
+      backwardMotor();
+      break;
+    case 'S':  // Stop
+      stopMotor();
+      break;
+    default:
+      // Invalid command ignore kar do
+      break;
+  }
+}
+
+// Forward move karne ka function
+void forwardMotor() {
+  digitalWrite(motorDirPin1, HIGH);
+  digitalWrite(motorDirPin2, LOW);
+  analogWrite(motorSpeedPin, 255); // Full speed
+}
+
+// Backward move karne ka function
+void backwardMotor() {
+  digitalWrite(motorDirPin1, LOW);
+  digitalWrite(motorDirPin2, HIGH);
+  analogWrite(motorSpeedPin, 255); // Full speed
+}
+
+// Motor ko stop karne ka function
+void stopMotor() {
+  digitalWrite(motorDirPin1, LOW);
+  digitalWrite(motorDirPin2, LOW);
+  analogWrite(motorSpeedPin, 0); // Speed = 0
+}
