@@ -1,0 +1,55 @@
+#include <SoftwareSerial.h>
+
+// Define RX and TX pins for ESP8266 communication
+SoftwareSerial ESPserial(10, 11); // RX, TX
+
+String command = "";
+
+void setup() {
+  // Start serial communication with ESP8266 and monitor
+  Serial.begin(9600);          // Monitor communication
+  ESPserial.begin(9600);       // ESP8266 communication
+  
+  // Initialize the ESP8266
+  Serial.println("Initializing ESP8266...");
+  ESPserial.println("AT");     // Send basic AT command
+  delay(2000);                 // Wait for response
+  
+  ESPserial.println("AT+CWMODE=1"); // Set ESP to station mode
+  delay(2000);
+
+  // Connect to WiFi
+  ESPserial.println("AT+CWJAP=\"YourSSID\",\"YourPassword\"");
+  delay(5000); // Adjust for WiFi connection time
+  
+  Serial.println("ESP8266 Initialized and Connected to WiFi!");
+}
+
+void loop() {
+  // Check for data from ESP8266
+  while (ESPserial.available()) {
+    char c = ESPserial.read();
+    command += c;
+    if (c == '\n') { // End of command
+      command.trim(); // Remove whitespace
+      processCommand(command);
+      command = ""; // Reset command
+    }
+  }
+}
+
+// Function to process commands from WiFi
+void processCommand(String cmd) {
+  if (cmd == "forward") {
+    Serial.println("Car moving forward");
+    // Add motor control code here
+  } else if (cmd == "backward") {
+    Serial.println("Car moving backward");
+    // Add motor control code here
+  } else if (cmd == "stop") {
+    Serial.println("Car stopped");
+    // Add motor control code here
+  } else {
+    Serial.println("Invalid command: " + cmd);
+  }
+}
