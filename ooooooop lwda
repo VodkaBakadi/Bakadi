@@ -1,0 +1,98 @@
+#include <SoftwareSerial.h>
+
+// Bluetooth module pins connected to Arduino Mega
+SoftwareSerial BTserial(10, 11); // RX, TX
+
+// Motor control pins (adjust based on your wiring)
+const int motorPin1 = 3;  // Motor A forward
+const int motorPin2 = 4;  // Motor A backward
+const int motorPin3 = 5;  // Motor B forward
+const int motorPin4 = 6;  // Motor B backward
+
+String command = ""; // Variable to store Bluetooth commands
+
+void setup() {
+  // Initialize motor pins as output
+  pinMode(motorPin1, OUTPUT);
+  pinMode(motorPin2, OUTPUT);
+  pinMode(motorPin3, OUTPUT);
+  pinMode(motorPin4, OUTPUT);
+
+  // Start communication
+  Serial.begin(9600);        // For Serial Monitor
+  BTserial.begin(9600);      // For Bluetooth Module
+  
+  Serial.println("Bluetooth Car Ready!");
+  Serial.println("Send commands: forward, backward, left, right, stop");
+}
+
+void loop() {
+  // Check if Bluetooth command is received
+  while (BTserial.available()) {
+    char c = BTserial.read();
+    command += c;
+    if (c == '\n') { // End of command
+      command.trim(); // Remove any unwanted spaces or line breaks
+      processCommand(command); // Execute the command
+      command = ""; // Clear the command string
+    }
+  }
+}
+
+// Process the received command
+void processCommand(String cmd) {
+  if (cmd == "forward") {
+    Serial.println("Moving forward");
+    moveForward();
+  } else if (cmd == "backward") {
+    Serial.println("Moving backward");
+    moveBackward();
+  } else if (cmd == "left") {
+    Serial.println("Turning left");
+    turnLeft();
+  } else if (cmd == "right") {
+    Serial.println("Turning right");
+    turnRight();
+  } else if (cmd == "stop") {
+    Serial.println("Stopping");
+    stopCar();
+  } else {
+    Serial.println("Unknown command: " + cmd);
+  }
+}
+
+// Functions for motor control
+void moveForward() {
+  digitalWrite(motorPin1, HIGH);
+  digitalWrite(motorPin2, LOW);
+  digitalWrite(motorPin3, HIGH);
+  digitalWrite(motorPin4, LOW);
+}
+
+void moveBackward() {
+  digitalWrite(motorPin1, LOW);
+  digitalWrite(motorPin2, HIGH);
+  digitalWrite(motorPin3, LOW);
+  digitalWrite(motorPin4, HIGH);
+}
+
+void turnLeft() {
+  digitalWrite(motorPin1, LOW);
+  digitalWrite(motorPin2, HIGH);
+  digitalWrite(motorPin3, HIGH);
+  digitalWrite(motorPin4, LOW);
+}
+
+void turnRight() {
+  digitalWrite(motorPin1, HIGH);
+  digitalWrite(motorPin2, LOW);
+  digitalWrite(motorPin3, LOW);
+  digitalWrite(motorPin4, HIGH);
+}
+
+void stopCar() {
+  digitalWrite(motorPin1, LOW);
+  digitalWrite(motorPin2, LOW);
+  digitalWrite(motorPin3, LOW);
+  digitalWrite(motorPin4, LOW);
+}
